@@ -4,6 +4,10 @@ class Api {
     this._baseUrl = baseUrl;
   }
 
+  setAuthorization(token){
+    this._headers['authorization'] = `Bearer ${token}`;
+  }
+
   _checkResponse(res) {
     if (res.ok) {
       return res.json();

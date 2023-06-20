@@ -47,6 +47,7 @@ function App() {
     signIn(email, password)
       .then((res) => {
         localStorage.setItem("jwt", res.token);
+        api.setAuthorization(res.token);
         setIsLoggedIn(true);
         setEmailValue(email);
         navigate("/");
@@ -88,6 +89,7 @@ function App() {
   function handleLogOut() {
     setIsLoggedIn(false);
     localStorage.removeItem("jwt");
+    api.setAuthorization("");
     setEmailValue(null);
     navigate("/sign-in");
   }
@@ -114,14 +116,24 @@ function App() {
   }, []);
 
   useEffect(() => {
-    Promise.all([api.getUserInfo(), api.getInitialCards()])
-      .then((values) => {
-        setCurrentUser(values[0]);
-        setCards([...values[1]]);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    if (localStorage.getItem("jwt")) {
+      const jwt = localStorage.getItem("jwt");
+      api.setAuthorization(jwt);
+
+      Promise.all([
+        api.getUserInfo(),
+        api.getInitialCards()
+      ])
+        .then((values) => {
+          setCurrentUser(values[0]);
+          setCards([...values[1]]);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      api.setAuthorization("");
+    }
   }, []);
 
   function handleEditAvatarClick() {
@@ -287,21 +299,6 @@ function App() {
           />
 
           <Route
-            path="/sign-up"
-            element={
-              <>
-                <Header
-                  isNavMenuOpen={isNavMenuOpen}
-                  title="Войти"
-                  route="/sign-in"
-                  hideNavItem={true}
-                />
-                <Register onRegister={handleRegister} isLoading={isLoading} />
-              </>
-            }
-          />
-
-          <Route
             path="/sign-in"
             element={
               <>
@@ -312,6 +309,21 @@ function App() {
                   hideNavItem={true}
                 />
                 <Login onLogin={handleLogin} isLoading={isLoading} />
+              </>
+            }
+          />
+
+          <Route
+            path="/sign-up"
+            element={
+              <>
+                <Header
+                  isNavMenuOpen={isNavMenuOpen}
+                  title="Войти"
+                  route="/sign-in"
+                  hideNavItem={true}
+                />
+                <Register onRegister={handleRegister} isLoading={isLoading} />
               </>
             }
           />
