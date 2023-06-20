@@ -1,3 +1,4 @@
+const { NODE_ENV, JWT_SECRET } = process.env;
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -20,8 +21,21 @@ const login = (req, res, next) => {
   return userModel
     .findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, SECRETKEY, { expiresIn: '7d' });
-      res.status(SUCСESSFUL_REQUEST).send({ token });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : SECRETKEY,
+        { expiresIn: '7d' },
+      );
+      res.status(SUCСESSFUL_REQUEST).send({
+        token,
+        user: {
+          _id: user._id,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+        },
+      });
     })
     .catch(next);
 };
@@ -61,12 +75,20 @@ const createUser = (req, res, next) => {
         ...req.body, password: hash,
       }))
     .then(({
-      name, about, avatar, email, _id, createdAt,
+      _id,
+      name,
+      about,
+      avatar,
+      email,
     }) => {
       res.status(CREATED).send(
         {
           data: {
-            name, about, avatar, email, _id, createdAt,
+            _id,
+            name,
+            about,
+            avatar,
+            email,
           },
         },
       );

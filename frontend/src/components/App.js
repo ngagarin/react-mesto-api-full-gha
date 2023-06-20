@@ -113,7 +113,7 @@ function App() {
           console.error(err);
         });
     }
-  }, []);
+  }, [navigate]); //или навигэйт всё же не нужен?
 
   useEffect(() => {
     if (localStorage.getItem("jwt")) {

@@ -39,6 +39,54 @@ const checkToken = (token) => {
 export {signUp, signIn, checkToken};
 
 /*
+export const baseUrl = 'https://mesto.ngagarin.com/api';
+
+const request = ({
+  url,
+  method = 'POST',
+  token,
+  data
+}) => {
+  return fetch(`${baseUrl}${url}`, {
+    method,
+    headers: {
+      'Content-type': 'application/json',
+      ...!!token && { 'authorization': `Bearer ${token}` }
+    },
+    ...!!data && { body: JSON.stringify(data) }
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(res);
+    });
+}
+
+export const signUp = (email, password) => {
+  return request({
+    url: '/signup',
+    data: { password: password, email: email }
+  });
+}
+
+export const signIn = (email, password) => {
+  return request({
+    url: '/signin',
+    data: { password, email }
+  });
+}
+
+export const checkToken = (token) => {
+  return request({
+    url: '/users/me',
+    method: 'GET',
+    token
+  });
+}
+*/
+
+/*
 const BASE_URL = 'https://mesto.ngagarin.com/api';
 
 const request = ({
