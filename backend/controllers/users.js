@@ -1,4 +1,4 @@
-const { NODE_ENV, JWT_SECRET } = process.env;
+require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -14,6 +14,8 @@ const {
   CREATED,
 } = require('../utils/constants');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
@@ -22,7 +24,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        NODE_ENV !== 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' },
       );
       res.status(SUCCESSFUL_REQUEST).send({
