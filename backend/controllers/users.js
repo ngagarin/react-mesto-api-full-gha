@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
-const { SECRETKEY } = require('../middlewares/auth');
 const {
   BadRequestError,
   NotFoundError,
@@ -11,7 +10,7 @@ const {
   InternalServerError,
 } = require('../utils/errors/index');
 const {
-  SUCСESSFUL_REQUEST,
+  SUCCESSFUL_REQUEST,
   CREATED,
 } = require('../utils/constants');
 
@@ -23,10 +22,10 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : SECRETKEY,
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' },
       );
-      res.status(SUCСESSFUL_REQUEST).send({
+      res.status(SUCCESSFUL_REQUEST).send({
         token,
         user: {
           _id: user._id,
@@ -43,7 +42,7 @@ const login = (req, res, next) => {
 const getAllUsers = (req, res, next) => {
   userModel
     .find({})
-    .then((users) => res.status(SUCСESSFUL_REQUEST).send({ data: users }))
+    .then((users) => res.status(SUCCESSFUL_REQUEST).send({ data: users }))
     .catch(next);
 };
 
@@ -55,7 +54,7 @@ const getUserById = (req, res, next) => {
   userModel
     .findById(userId)
     .orFail(new NotFoundError(`Пользователь с id:${userId} не найден`))
-    .then((user) => res.status(SUCСESSFUL_REQUEST).send({ data: user }))
+    .then((user) => res.status(SUCCESSFUL_REQUEST).send({ data: user }))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
@@ -110,7 +109,7 @@ const updateProfile = (req, res, next) => {
   userModel
     .findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new NotFoundError(`Пользователь с id:${req.user._id} не найден`))
-    .then((user) => res.status(SUCСESSFUL_REQUEST).send({ data: user }))
+    .then((user) => res.status(SUCCESSFUL_REQUEST).send({ data: user }))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
@@ -128,7 +127,7 @@ const updateAvatar = (req, res, next) => {
   userModel
     .findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(new NotFoundError(`Пользователь с id:${req.user._id} не найден`))
-    .then((user) => res.status(SUCСESSFUL_REQUEST).send({ data: user }))
+    .then((user) => res.status(SUCCESSFUL_REQUEST).send({ data: user }))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);

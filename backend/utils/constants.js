@@ -1,4 +1,4 @@
-const SUCСESSFUL_REQUEST = 200;
+const SUCCESSFUL_REQUEST = 200;
 const CREATED = 201;
 const URL_PATTERN = /^https?:\/\/(?:w{3}\.)?(?:[a-z0-9]+[a-z0-9-]*\.)+[a-z]{2,}(?::[0-9]+)?(?:\/\S*)?#?$/i;
 const allowedCors = [
@@ -11,7 +11,7 @@ const allowedCors = [
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 
 module.exports = {
-  SUCСESSFUL_REQUEST,
+  SUCCESSFUL_REQUEST,
   CREATED,
   URL_PATTERN,
   allowedCors,

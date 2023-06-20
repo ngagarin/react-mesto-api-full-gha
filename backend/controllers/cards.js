@@ -7,14 +7,14 @@ const {
   InternalServerError,
 } = require('../utils/errors/index');
 const {
-  SUCСESSFUL_REQUEST,
+  SUCCESSFUL_REQUEST,
   CREATED,
 } = require('../utils/constants');
 
 const getAllCards = (req, res, next) => {
   cardModel
     .find({})
-    .then((cards) => res.status(SUCСESSFUL_REQUEST).send({ data: cards }))
+    .then((cards) => res.status(SUCCESSFUL_REQUEST).send({ data: cards }))
     .catch(next);
 };
 
@@ -47,7 +47,7 @@ const deleteCardById = (req, res, next) => {
       }
       return cardModel.findByIdAndRemove(cardId);
     })
-    .then((card) => res.status(SUCСESSFUL_REQUEST).send({ message: `Карточка _id:${card._id} удалена` }))
+    .then((card) => res.status(SUCCESSFUL_REQUEST).send({ message: `Карточка _id:${card._id} удалена` }))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
@@ -67,7 +67,7 @@ const likeCard = (req, res, next) => {
       { new: true },
     )
     .orFail(new NotFoundError('Не найдена карточка с указанным _id.'))
-    .then((card) => res.status(SUCСESSFUL_REQUEST).send({ data: card }))
+    .then((card) => res.status(SUCCESSFUL_REQUEST).send({ data: card }))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
@@ -87,7 +87,7 @@ const dislikeCard = (req, res, next) => {
       { new: true },
     )
     .orFail(new NotFoundError('Не найдена карточка с указанным _id.'))
-    .then((card) => res.status(SUCСESSFUL_REQUEST).send({ data: card }))
+    .then((card) => res.status(SUCCESSFUL_REQUEST).send({ data: card }))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
