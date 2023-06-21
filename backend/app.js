@@ -8,8 +8,8 @@ const router = require('./routes/index');
 const handleError = require('./middlewares/handleError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-// mongoose.connect(process.env.DB_URL);
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect(process.env.DB_URL);
+// mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
 const { PORT = 3000 } = process.env;
