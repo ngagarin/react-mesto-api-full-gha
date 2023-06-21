@@ -1,145 +1,69 @@
-const BASE_URL = 'https://mesto.ngagarin.com/api';
+const BASE_URL = 'http://localhost:3000';
 
 const checkResponse = (res) => {
   return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
 }
 
+// registration
 const signUp = (email, password) => {
-  const requestUrl = BASE_URL + '/signup';
-  return fetch(requestUrl, {
+  return fetch(`${BASE_URL}/signup`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ email, password }),
-  }).then(checkResponse);
+  })
+    .then(checkResponse);
 }
 
+// login
 const signIn = (email, password) => {
-  const requestUrl = BASE_URL + '/signin';
-  return fetch(requestUrl, {
+  return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ email, password }),
-  }).then(checkResponse);
+  })
+    .then(checkResponse)
+    .then((data) => {
+    localStorage.getItem('userId', data._id);
+    return data;
+  })
 }
-
+/*
 const checkToken = (token) => {
-  const requestUrl = BASE_URL + '/users/me';
-  return fetch(requestUrl, {
+  return fetch(`${BASE_URL}/users/me`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
+      'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      // 'Authorization': `Bearer ${token}`
     },
-  }).then(checkResponse);
+  })
+    .then(checkResponse);
 }
+*/
+const checkToken = (token) => {
+  return fetch(`${BASE_URL}/users/me`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Cookie': `jwt=${token}`
+    },
+  })
+    .then(checkResponse)
+    .then((data) => {
+      localStorage.setItem('userId', data._id);
+      return data;
+    });
+};
 
 export {signUp, signIn, checkToken};
-
-/*
-export const baseUrl = 'https://mesto.ngagarin.com/api';
-
-const request = ({
-  url,
-  method = 'POST',
-  token,
-  data
-}) => {
-  return fetch(`${baseUrl}${url}`, {
-    method,
-    headers: {
-      'Content-type': 'application/json',
-      ...!!token && { 'authorization': `Bearer ${token}` }
-    },
-    ...!!data && { body: JSON.stringify(data) }
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(res);
-    });
-}
-
-export const signUp = (email, password) => {
-  return request({
-    url: '/signup',
-    data: { password: password, email: email }
-  });
-}
-
-export const signIn = (email, password) => {
-  return request({
-    url: '/signin',
-    data: { password, email }
-  });
-}
-
-export const checkToken = (token) => {
-  return request({
-    url: '/users/me',
-    method: 'GET',
-    token
-  });
-}
-*/
-
-/*
-const BASE_URL = 'https://mesto.ngagarin.com/api';
-
-const request = ({
-  url,
-  method = 'POST',
-  token,
-  data
-}) => {
-  return fetch(`${BASE_URL}${url}`, {
-    method,
-    headers: {
-      //'Accept': 'application/json',
-      'Content-type': 'application/json',
-      ...!!token && { 'authorization': `Bearer ${token}` }
-    },
-    ...!!data && { body: JSON.stringify(data) }
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(res);
-    });
-}
-
-const signIn = (email, password) => {
-  return request({
-    url: '/signup',
-    data: { password: password, email: email }
-  });
-}
-
-const signUp = (email, password) => {
-  return request({
-    url: '/signin',
-    data: { password, email }
-  });
-}
-
-const checkToken = (token) => {
-  return request({
-    url: '/users/me',
-    method: 'GET',
-    token
-  });
-}
-
-export {
-  signUp,
-  signIn,
-  checkToken
-};
-*/

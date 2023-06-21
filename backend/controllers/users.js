@@ -24,10 +24,14 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV !== 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
       );
-      res.status(SUCCESSFUL_REQUEST).send({ token });
+      res.cookie('jwt', token, {
+        maxAge: 36000000000,
+        httpOnly: true,
+        sameSite: true,
+      })
+        .send(user.toJSON());
     })
     .catch(next);
 };
@@ -35,7 +39,7 @@ const login = (req, res, next) => {
 const getAllUsers = (req, res, next) => {
   userModel
     .find({})
-    .then((users) => res.status(SUCCESSFUL_REQUEST).send({ data: users }))
+    .then((users) => res.status(SUCCESSFUL_REQUEST).send(users))
     .catch(next);
 };
 
@@ -47,7 +51,7 @@ const getUserById = (req, res, next) => {
   userModel
     .findById(userId)
     .orFail(new NotFoundError(`Пользователь с id:${userId} не найден`))
-    .then((user) => res.status(SUCCESSFUL_REQUEST).send({ data: user }))
+    .then((user) => res.status(SUCCESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
@@ -102,7 +106,7 @@ const updateProfile = (req, res, next) => {
   userModel
     .findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new NotFoundError(`Пользователь с id:${req.user._id} не найден`))
-    .then((user) => res.status(SUCCESSFUL_REQUEST).send({ data: user }))
+    .then((user) => res.status(SUCCESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
@@ -120,7 +124,7 @@ const updateAvatar = (req, res, next) => {
   userModel
     .findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(new NotFoundError(`Пользователь с id:${req.user._id} не найден`))
-    .then((user) => res.status(SUCCESSFUL_REQUEST).send({ data: user }))
+    .then((user) => res.status(SUCCESSFUL_REQUEST).send(user))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);

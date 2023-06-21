@@ -2,7 +2,7 @@ import React from 'react';
 import Card from './Card';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-import profileAvatar from '../images/profile/programmist.jpeg';
+import profileAvatar from '../images/profile/kusto.png';
 
 function Main({ onEditProfile, onEditAvatar, onAddPlace, cards, onCardClick, onCardLike, onConfirmCardDelete }) {
   const currentUser = React.useContext(CurrentUserContext);
@@ -16,10 +16,10 @@ function Main({ onEditProfile, onEditAvatar, onAddPlace, cards, onCardClick, onC
         </button>
         <div className="profile__info">
           <div className="profile__name-info">
-            <h1 className="profile__name">{currentUser.name ? currentUser.name : 'Николай Гагарин'}</h1>
+            <h1 className="profile__name">{currentUser.name ? currentUser.name : 'Жак-Ив Кусто'}</h1>
             <button onClick={onEditProfile} className="profile__button profile__button_type_edit" type="button"></button>
           </div>
-          <p className="profile__about">{currentUser.about ? currentUser.about : 'Студент Яндекс.Практикум'}</p>
+          <p className="profile__about">{currentUser.about ? currentUser.about : 'Исследователь'}</p>
         </div>
         <button onClick={onAddPlace} className="profile__button profile__button_type_add" type="button"></button>
       </section>

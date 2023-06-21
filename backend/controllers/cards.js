@@ -14,7 +14,7 @@ const {
 const getAllCards = (req, res, next) => {
   cardModel
     .find({})
-    .then((cards) => res.status(SUCCESSFUL_REQUEST).send({ data: cards }))
+    .then((cards) => res.status(SUCCESSFUL_REQUEST).send(cards))
     .catch(next);
 };
 
@@ -25,7 +25,7 @@ const createCard = (req, res, next) => {
   cardModel
     .create({ name, link, owner })
     .then((card) => {
-      res.status(CREATED).send({ data: card });
+      res.status(CREATED).send(card);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
@@ -40,14 +40,15 @@ const deleteCardById = (req, res, next) => {
 
   cardModel
     .findById(cardId)
+    // .populate(['likes', 'owner'])
     .orFail(new NotFoundError('Не найдена карточка с указанным _id.'))
-    .then((cardDoc) => {
-      if (req.user._id !== cardDoc.owner.toString()) {
+    .then((card) => {
+      if (req.user._id !== card.owner.toString()) {
         return next(new ForbidenError('Нельзя удалять чужую карточку'));
       }
-      return cardModel.findByIdAndRemove(cardId);
+      return cardModel.findByIdAndRemove(card); // или card
     })
-    .then((card) => res.status(SUCCESSFUL_REQUEST).send({ message: `Карточка _id:${card._id} удалена` }))
+    .then((card) => res.status(SUCCESSFUL_REQUEST).send({ message: `Карточка _id:${card._id} удалена` })) // или card
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
@@ -66,8 +67,9 @@ const likeCard = (req, res, next) => {
       { $addToSet: { likes: req.user._id } },
       { new: true },
     )
+    // .populate(['likes', 'owner'])
     .orFail(new NotFoundError('Не найдена карточка с указанным _id.'))
-    .then((card) => res.status(SUCCESSFUL_REQUEST).send({ data: card }))
+    .then((card) => res.status(SUCCESSFUL_REQUEST).send(card))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
@@ -86,8 +88,9 @@ const dislikeCard = (req, res, next) => {
       { $pull: { likes: req.user._id } },
       { new: true },
     )
+    // .populate(['likes', 'owner'])
     .orFail(new NotFoundError('Не найдена карточка с указанным _id.'))
-    .then((card) => res.status(SUCCESSFUL_REQUEST).send({ data: card }))
+    .then((card) => res.status(SUCCESSFUL_REQUEST).send(card))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
