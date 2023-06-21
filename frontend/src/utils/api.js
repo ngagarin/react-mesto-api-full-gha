@@ -89,7 +89,7 @@ class Api {
 const api = new Api({
   baseUrl: `https://mesto.ngagarin.com/api`,
   headers: {
-    authorization: '',
+    authorization: localStorage.getItem('jwt'),
     'Content-Type': 'application/json'
   }
 });

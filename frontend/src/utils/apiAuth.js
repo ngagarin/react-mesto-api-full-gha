@@ -1,17 +1,17 @@
-const checkResponse = (res) => {
-  if (res.ok) {
-    return res.json();
-  }
-    return Promise.reject(res.status);
-}
-
 const BASE_URL = 'https://mesto.ngagarin.com/api';
+
+const checkResponse = (res) => {
+  return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
+}
 
 const signUp = (email, password) => {
   const requestUrl = BASE_URL + '/signup';
   return fetch(requestUrl, {
     method: 'POST',
-    headers: {"Content-Type": "application/json"},
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({ email, password }),
   }).then(checkResponse);
 }
@@ -20,7 +20,10 @@ const signIn = (email, password) => {
   const requestUrl = BASE_URL + '/signin';
   return fetch(requestUrl, {
     method: 'POST',
-    headers: {"Content-Type": "application/json"},
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({ email, password }),
   }).then(checkResponse);
 }
@@ -30,8 +33,8 @@ const checkToken = (token) => {
   return fetch(requestUrl, {
     method: 'GET',
     headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
     },
   }).then(checkResponse);
 }

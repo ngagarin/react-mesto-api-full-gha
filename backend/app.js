@@ -5,11 +5,11 @@ const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const router = require('./routes/index');
 const handleError = require('./middlewares/handleError');
-const { DB_ADRESS } = require('./config');
+// const { DB_ADRESS } = require('./config');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-mongoose.connect(DB_ADRESS);
-// mongoose.connect('mongodb://localhost:27017/mestodb');
+// mongoose.connect(DB_ADRESS);
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
 const { PORT = 3000 } = process.env;
