@@ -30,13 +30,6 @@ router.get('/crash-test', () => {
   }, 0);
 });
 
-router.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  }),
-}), userController.login);
-
 router.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
@@ -47,6 +40,13 @@ router.post('/signup', celebrate({
       .default('https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'),
   }),
 }), userController.createUser);
+
+router.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+}), userController.login);
 
 router.use(validateToken);
 router.use('/users', userRouter);
