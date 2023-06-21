@@ -47,11 +47,10 @@ function App() {
     setLoading(true);
     signIn(email, password)
       .then((res) => {
-        // localStorage.setItem('jwt', res.token);
-        document.cookie = `jwt=${res.token}; path=/;`;
+        localStorage.setItem('jwt', res.token);
         setIsLoggedIn(true);
         setEmailValue(email);
-        navigate("/")
+        navigate("/");
       })
       .catch(() => {
         setAuthStatus({ image: crossImg, message: 'Что-то пошло не так! Попробуйте еще раз.' });
@@ -74,21 +73,13 @@ function App() {
         handleInfoTooltip();
       });
   };
-/*
+
   function handleLogOut() {
     setIsLoggedIn(false);
-    // localStorage.removeItem('userId');
-    document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    localStorage.removeItem('userId');
     setEmailValue(null);
     navigate("/sign-in");
   };
-*/
-function handleLogOut() {
-  setIsLoggedIn(false);
-  document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  setEmailValue(null);
-  navigate("/sign-in");
-}
 
   function handleInfoTooltip() {
     setInfoTooltip(true);

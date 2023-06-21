@@ -8,13 +8,13 @@ const router = require('./routes/index');
 const handleError = require('./middlewares/handleError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-mongoose.connect(process.env.DB_URL);
+mongoose.connect(process.env.DB_ADRESS);
 // mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
 const { PORT = 3000 } = process.env;
 
-app.use(cors({ origin: ['http://localhost:3001', 'https://mesto.ngagarin.com'], credentials: true }));
+app.use(cors({ origin: ['https://mesto.ngagarin.com', 'http://localhost:3001'], credentials: true }));
 app.use(helmet());
 
 const limiter = rateLimit({

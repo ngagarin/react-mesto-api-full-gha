@@ -1,4 +1,4 @@
-const BASE_URL = 'https://mesto.ngagarin.com/api';
+const BASE_URL = 'http://localhost:3000';
 
 const checkResponse = (res) => {
   return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
@@ -8,7 +8,6 @@ const checkResponse = (res) => {
 const signUp = (email, password) => {
   return fetch(`${BASE_URL}/signup`, {
     method: 'POST',
-    credentials: 'include',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -35,7 +34,7 @@ const signIn = (email, password) => {
     return data;
   })
 }
-/*
+
 const checkToken = (token) => {
   return fetch(`${BASE_URL}/users/me`, {
     method: 'GET',
@@ -43,27 +42,10 @@ const checkToken = (token) => {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      // 'Authorization': `Bearer ${token}`
+      //'Authorization': `Bearer ${token}`
     },
   })
     .then(checkResponse);
 }
-*/
-const checkToken = (token) => {
-  return fetch(`${BASE_URL}/users/me`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Cookie': `jwt=${token}`
-    },
-  })
-    .then(checkResponse)
-    .then((data) => {
-      localStorage.setItem('userId', data._id);
-      return data;
-    });
-};
 
 export {signUp, signIn, checkToken};
