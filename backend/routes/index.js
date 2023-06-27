@@ -4,25 +4,8 @@ const userRouter = require('./users');
 const cardRouter = require('./cards');
 const userController = require('../controllers/users');
 const { validateToken } = require('../middlewares/auth');
-const { URL_PATTERN, allowedCors, DEFAULT_ALLOWED_METHODS } = require('../utils/constants');
+const { URL_PATTERN } = require('../utils/constants');
 const { NotFoundError } = require('../utils/errors/index');
-
-// обработка простых CORS запросов и префлайт запросовp
-router.use((req, res, next) => {
-  const { origin } = req.headers;
-  const { method } = req;
-  if (allowedCors.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-    if (method === 'OPTIONS') {
-      res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-      const requestHeaders = req.headers['access-control-request-headers'];
-      res.header('Access-Control-Allow-Headers', requestHeaders);
-      return res.end();
-    }
-  }
-
-  return next();
-});
 
 router.get('/crash-test', () => {
   setTimeout(() => {

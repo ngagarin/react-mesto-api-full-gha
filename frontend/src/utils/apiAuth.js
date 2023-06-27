@@ -1,4 +1,5 @@
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://ngagarin.nomoredomains.rocks/api';
+// const BASE_URL = 'http://localhost:3000/api';
 
 const checkResponse = (res) => {
   return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
@@ -28,21 +29,20 @@ const signIn = (email, password) => {
     },
     body: JSON.stringify({ email, password }),
   })
-    .then(checkResponse)
     .then((data) => {
-    localStorage.getItem('userId', data._id);
+    localStorage.setItem('jwt', data._id);
     return data;
   })
+  .then(checkResponse)
 }
 
-const checkToken = (token) => {
+const checkToken = () => {
   return fetch(`${BASE_URL}/users/me`, {
     method: 'GET',
     credentials: 'include',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      //'Authorization': `Bearer ${token}`
     },
   })
     .then(checkResponse);

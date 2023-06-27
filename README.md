@@ -9,8 +9,8 @@
 
 ## Ссылки на проект
 
-IP-адрес 158.160.48.163
+IP-адрес 158.160.46.150
 
-Frontend https://mesto.ngagarin.com/
+Frontend https://ngagarin.nomoredomains.rocks/
 
-Backend https://mesto.ngagarin.com/api/
+Backend https://ngagarin.nomoredomains.rocks/api/

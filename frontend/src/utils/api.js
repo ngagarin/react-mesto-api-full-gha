@@ -1,5 +1,6 @@
 class Api {
   constructor({ baseUrl, headers }) {
+    this._headers = headers;
     this._baseUrl = baseUrl;
   }
 
@@ -18,6 +19,7 @@ class Api {
   getInitialCards() {
     return fetch(`${this._baseUrl}/cards`, {
       credentials: 'include',
+      headers: this._headers,
     })
       .then(this._checkResponse);
   }
@@ -26,9 +28,7 @@ class Api {
     return fetch(`${this._baseUrl}/cards`, {
       method: 'POST',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this._headers,
       body: JSON.stringify({
         name,
         link,
@@ -41,14 +41,15 @@ class Api {
     return fetch(`${this._baseUrl}/cards/${cardId}`, {
       method: 'DELETE',
       credentials: 'include',
+      headers: this._headers,
     })
       .then(this._checkResponse);
   }
 
-
   getUserInfo() {
     return fetch(`${this._baseUrl}/users/me`, {
       credentials: 'include',
+      headers: this._headers,
     })
       .then(this._checkResponse);
   }
@@ -57,9 +58,7 @@ class Api {
     return fetch(`${this._baseUrl}/users/me`, {
       method: 'PATCH',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this._headers,
       body: JSON.stringify({
         name,
         about,
@@ -68,13 +67,11 @@ class Api {
       .then(this._checkResponse);
   }
 
-  updateProfileAvatar(avatar) {
+updateProfileAvatar(avatar) {
     return fetch(`${this._baseUrl}/users/me/avatar`, {
       method: 'PATCH',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this._headers,
       body: JSON.stringify({
         avatar,
       }),
@@ -86,9 +83,7 @@ class Api {
     return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: 'PUT',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this._headers,
     })
       .then(this._checkResponse);
   }
@@ -97,16 +92,19 @@ class Api {
     return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: 'DELETE',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: this._headers,
     })
       .then(this._checkResponse);
   }
-}
 
+}
 const api = new Api({
-  baseUrl: `http://localhost:3000`,
+  baseUrl: `https://ngagarin.nomoredomains.rocks/api`,
+  // baseUrl: `http://localhost:3000/api`,
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  }
 });
 
 export default api;
