@@ -40,6 +40,8 @@ app.use(requestLogger);
 app.use((req, res, next) => {
   if (req.url.startsWith('/api')) {
     app.use('/api', router);
+  } else {
+    app.use('/', router);
   }
   next();
 });
