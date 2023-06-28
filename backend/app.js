@@ -8,12 +8,14 @@ const router = require('./routes/index');
 const handleError = require('./middlewares/handleError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-/*
+/* на деплой
 mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 */
+
+// на автотесты
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const app = express();
@@ -33,7 +35,14 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
-app.use('/api', router);
+// app.use('/api', router); // на деплой
+// на автотесты:
+app.use((req, res, next) => {
+  if (req.url.startsWith('/api')) {
+    app.use('/api', router);
+  }
+  next();
+});
 app.use(errorLogger);
 app.use(handleError);
 app.listen(PORT, () => {
