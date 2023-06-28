@@ -1,20 +1,14 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
+const { SUCCESSFUL_REQUEST, CREATED } = require('../utils/constants');
+const { NODE_ENV, JWT_SECRET } = require('../config');
 const {
   BadRequestError,
   NotFoundError,
   ConflictError,
-  InternalServerError,
 } = require('../utils/errors/index');
-const {
-  SUCCESSFUL_REQUEST,
-  CREATED,
-} = require('../utils/constants');
-
-const { NODE_ENV, JWT_SECRET } = process.env;
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -22,17 +16,17 @@ const login = (req, res, next) => {
   return userModel
     .findUserByCredentials(email, password)
     .then((user) => {
+      const { _id, name, about, avatar, email } = user;
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
       );
       res.cookie('jwt', token, {
-        // maxAge: 36000,
         httpOnly: true,
-        sameSite: false,
+        sameSite: true,
         secure: true,
       })
-        .send(user.toJSON());
+        .send({ _id, name, about, avatar, email });
     })
     .catch(next);
 };
@@ -40,7 +34,7 @@ const login = (req, res, next) => {
 const logout = (req, res) => {
   res.clearCookie('jwt', {
     httpOnly: true,
-    sameSite: false,
+    sameSite: true,
     secure: true,
   });
   return res.status(200).json({ message: 'Деавторизация прошла успешно.' });
@@ -69,7 +63,7 @@ const getUserById = (req, res, next) => {
       if (err instanceof mongoose.Error.CastError) {
         return next(new BadRequestError('Переданы некорректные данные пользователя'));
       }
-      return next(new InternalServerError('Произошла ошибка на сервере.'));
+      return next(new Error('Произошла ошибка на сервере.'));
     });
 };
 
@@ -106,45 +100,41 @@ const createUser = (req, res, next) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные пользователя'));
       }
-      return next(new InternalServerError('Произошла ошибка на сервере.'));
+      return next(new Error('Произошла ошибка на сервере.'));
     });
 };
 
-const updateProfile = (req, res, next) => {
+const updateUserInfo = (update) => (req, res, next) => {
+  update(req)
+    .then((user) => res.status(SUCCESSFUL_REQUEST).send(user))
+    .catch((err) => {
+      if (err instanceof NotFoundError) {
+        return next(err);
+      }
+      if (err instanceof mongoose.Error.ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные пользователя'));
+      }
+      return next(new Error('Произошла ошибка на сервере.'));
+    });
+};
+
+const updateProfile = updateUserInfo((req) => {
   const { name, about } = req.body;
+  return userModel.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    { new: true, runValidators: true },
+  ).orFail(new NotFoundError(`Пользователь с id:${req.user._id} не найден`));
+});
 
-  userModel
-    .findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .orFail(new NotFoundError(`Пользователь с id:${req.user._id} не найден`))
-    .then((user) => res.status(SUCCESSFUL_REQUEST).send(user))
-    .catch((err) => {
-      if (err instanceof NotFoundError) {
-        return next(err);
-      }
-      if (err instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError('Переданы некорректные данные пользователя'));
-      }
-      return next(new InternalServerError('Произошла ошибка на сервере.'));
-    });
-};
-
-const updateAvatar = (req, res, next) => {
+const updateAvatar = updateUserInfo((req) => {
   const { avatar } = req.body;
-
-  userModel
-    .findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .orFail(new NotFoundError(`Пользователь с id:${req.user._id} не найден`))
-    .then((user) => res.status(SUCCESSFUL_REQUEST).send(user))
-    .catch((err) => {
-      if (err instanceof NotFoundError) {
-        return next(err);
-      }
-      if (err instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError('Переданы некорректные данные пользователя'));
-      }
-      return next(new InternalServerError('Произошла ошибка на сервере.'));
-    });
-};
+  return userModel.findByIdAndUpdate(
+    req.user._id,
+    { avatar },
+    { new: true, runValidators: true },
+  ).orFail(new NotFoundError(`Пользователь с id:${req.user._id} не найден`));
+});
 
 module.exports = {
   login,

@@ -1,15 +1,11 @@
 const mongoose = require('mongoose');
 const cardModel = require('../models/card');
+const { SUCCESSFUL_REQUEST, CREATED } = require('../utils/constants');
 const {
   BadRequestError,
   ForbidenError,
   NotFoundError,
-  InternalServerError,
 } = require('../utils/errors/index');
-const {
-  SUCCESSFUL_REQUEST,
-  CREATED,
-} = require('../utils/constants');
 
 const getAllCards = (req, res, next) => {
   cardModel
@@ -31,7 +27,7 @@ const createCard = (req, res, next) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные карточки'));
       }
-      return next(new InternalServerError('Произошла ошибка на сервере.'));
+      return next(new Error('Произошла ошибка на сервере.'));
     });
 };
 
@@ -40,15 +36,14 @@ const deleteCardById = (req, res, next) => {
 
   cardModel
     .findById(cardId)
-    // .populate(['likes', 'owner'])
     .orFail(new NotFoundError('Не найдена карточка с указанным _id.'))
     .then((card) => {
       if (req.user._id !== card.owner.toString()) {
         return next(new ForbidenError('Нельзя удалять чужую карточку'));
       }
-      return cardModel.findByIdAndRemove(card); // или card
+      return cardModel.findByIdAndRemove(card);
     })
-    .then((card) => res.status(SUCCESSFUL_REQUEST).send({ message: `Карточка _id:${card._id} удалена` })) // или card
+    .then((card) => res.status(SUCCESSFUL_REQUEST).send({ message: `Карточка _id:${card._id} удалена` }))
     .catch((err) => {
       if (err instanceof NotFoundError) {
         return next(err);
@@ -56,7 +51,7 @@ const deleteCardById = (req, res, next) => {
       if (err instanceof mongoose.Error.CastError) {
         return next(new BadRequestError('Переданы некорректные данные карточки'));
       }
-      return next(new InternalServerError('Произошла ошибка на сервере.'));
+      return next(new Error('Произошла ошибка на сервере.'));
     });
 };
 
@@ -67,7 +62,6 @@ const likeCard = (req, res, next) => {
       { $addToSet: { likes: req.user._id } },
       { new: true },
     )
-    // .populate(['likes', 'owner'])
     .orFail(new NotFoundError('Не найдена карточка с указанным _id.'))
     .then((card) => res.status(SUCCESSFUL_REQUEST).send(card))
     .catch((err) => {
@@ -77,7 +71,7 @@ const likeCard = (req, res, next) => {
       if (err instanceof mongoose.Error.CastError) {
         return next(new BadRequestError('Переданы некорректные данные карточки'));
       }
-      return next(new InternalServerError('Произошла ошибка на сервере.'));
+      return next(new Error('Произошла ошибка на сервере.'));
     });
 };
 
@@ -88,7 +82,6 @@ const dislikeCard = (req, res, next) => {
       { $pull: { likes: req.user._id } },
       { new: true },
     )
-    // .populate(['likes', 'owner'])
     .orFail(new NotFoundError('Не найдена карточка с указанным _id.'))
     .then((card) => res.status(SUCCESSFUL_REQUEST).send(card))
     .catch((err) => {
@@ -98,7 +91,7 @@ const dislikeCard = (req, res, next) => {
       if (err instanceof mongoose.Error.CastError) {
         return next(new BadRequestError('Переданы некорректные данные карточки'));
       }
-      return next(new InternalServerError('Произошла ошибка на сервере.'));
+      return next(new Error('Произошла ошибка на сервере.'));
     });
 };
 

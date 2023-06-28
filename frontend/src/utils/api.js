@@ -99,8 +99,8 @@ updateProfileAvatar(avatar) {
 }
 
 const api = new Api({
-  baseUrl: `/api`,
-  // baseUrl: `http://localhost:3000/api`,
+  // baseUrl: `/api`,
+  baseUrl: `http://localhost:3000/api`,
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',

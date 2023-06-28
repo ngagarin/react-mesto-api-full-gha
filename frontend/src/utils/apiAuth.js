@@ -1,5 +1,5 @@
-const BASE_URL = '/api';
-// const BASE_URL = 'http://localhost:3000/api';
+// const BASE_URL = '/api';
+const BASE_URL = 'http://localhost:3000/api';
 
 const checkResponse = (res) => {
   return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
