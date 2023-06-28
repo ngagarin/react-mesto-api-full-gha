@@ -96,10 +96,10 @@ updateProfileAvatar(avatar) {
     })
       .then(this._checkResponse);
   }
-
 }
+
 const api = new Api({
-  baseUrl: `https://ngagarin.nomoredomains.rocks/api`,
+  baseUrl: `/api`,
   // baseUrl: `http://localhost:3000/api`,
   headers: {
     'Accept': 'application/json',

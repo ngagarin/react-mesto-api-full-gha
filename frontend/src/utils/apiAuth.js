@@ -1,4 +1,4 @@
-const BASE_URL = 'https://ngagarin.nomoredomains.rocks/api';
+const BASE_URL = '/api';
 // const BASE_URL = 'http://localhost:3000/api';
 
 const checkResponse = (res) => {
@@ -33,7 +33,20 @@ const signIn = (email, password) => {
     localStorage.setItem('jwt', data._id);
     return data;
   })
-  .then(checkResponse)
+    .then(checkResponse)
+}
+
+// logout
+const logOut = () => {
+  return fetch(`${BASE_URL}/logout`, {
+    method: 'POST',
+    credentials: 'include',
+  })
+    .then((data) => {
+    localStorage.removeItem('jwt');
+    return data;
+  })
+    .then(checkResponse)
 }
 
 const checkToken = () => {
@@ -48,4 +61,4 @@ const checkToken = () => {
     .then(checkResponse);
 }
 
-export {signUp, signIn, checkToken};
+export {signUp, signIn, logOut, checkToken};

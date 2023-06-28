@@ -14,7 +14,7 @@ import ImagePopup from "./ImagePopup";
 import api from "../utils/api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-import { signUp, signIn, checkToken } from "../utils/apiAuth";
+import { signUp, signIn, logOut, checkToken } from "../utils/apiAuth";
 import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
@@ -46,7 +46,7 @@ function App() {
     setLoading(true);
     signIn(email, password)
       .then((res) => {
-        localStorage.setItem('jwt', res._id);
+        localStorage.setItem("jwt", res._id);
         setIsLoggedIn(true);
         setEmailValue(email);
         navigate("/");
@@ -86,21 +86,22 @@ function App() {
   }
 
   function handleLogOut() {
+    logOut();
     setIsLoggedIn(false);
-    localStorage.removeItem('jwt');
+    localStorage.removeItem("jwt");
     setEmailValue(null);
     navigate("/sign-in");
   }
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
+    const jwt = localStorage.getItem("jwt");
     if (jwt) {
       checkToken(jwt)
         .then((res) => {
           if (res) {
             setIsLoggedIn(true);
             setEmailValue(res.email);
-            navigate('/');
+            navigate("/");
           }
         })
         .catch((err) => {

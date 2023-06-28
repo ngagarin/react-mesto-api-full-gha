@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import PopupWithForm from './PopupWithForm';
 import { useInput } from '../hooks/FormValidator.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
@@ -6,41 +6,26 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function EditProfilePopup({ isOpen, onUpdateUser, isLoading, ...commonProps }) {
 
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
   const currentUser = useContext(CurrentUserContext);
 
+  const login = useInput(currentUser?.name || '', { isEmpty: true, minLength: 2 });
+  const about = useInput(currentUser?.about || '', { isEmpty: true, minLength: 2 });
 
   useEffect(() => {
     if (isOpen) {
-      setName(currentUser.name);
-      setDescription(currentUser.about);
       login.resetValidation();
       about.resetValidation();
     }
-  }, [currentUser, isOpen]);
-
-  function handleNameChange(event, onChange) {
-    setName(event.target.value);
-    onChange(event); // вызываем onChange из useInput
-  }
-
-  function handleDescriptionChange(event, onChange) {
-    setDescription(event.target.value);
-    onChange(event);
-  }
+  }, [isOpen]);
 
   function handleSubmit(e) {
     e.preventDefault();
 
     onUpdateUser({
-      name,
-      about: description
+      name: login.value,
+      about: about.value
     });
   }
-
-  const login = useInput('', { isEmpty: true, minLength: 2 })
-  const about = useInput('', { isEmpty: true, minLength: 2 })
 
   return (
     <PopupWithForm
@@ -55,13 +40,12 @@ function EditProfilePopup({ isOpen, onUpdateUser, isLoading, ...commonProps }) {
       submitText='Сохранить'
       submitTextLoading='Сохранение...'
       onSubmit={handleSubmit}
-
     >
       <label className="form__item">
         <input
-          onChange={(event) => handleNameChange(event, login.onChange)}
+          onChange={login.onChange}
           onFocus={login.onFocus}
-          value={name}
+          value={login.value}
           type="text"
           className={`form__input ${login.isDirty && (login.isEmpty || login.minLengthError || login.maxLengthError) ? "form__input_type_error" : ""}`}
           placeholder='Имя'
@@ -81,9 +65,9 @@ function EditProfilePopup({ isOpen, onUpdateUser, isLoading, ...commonProps }) {
 
       <label className="form__item">
         <input
-          onChange={(event) => handleDescriptionChange(event, about.onChange)}
+          onChange={about.onChange}
           onFocus={about.onFocus}
-          value={description}
+          value={about.value}
           type="text"
           className={`form__input ${about.isDirty && (about.isEmpty || about.minLengthError || about.maxLengthError) ? "form__input_type_error" : ""}`}
           placeholder='О себе'

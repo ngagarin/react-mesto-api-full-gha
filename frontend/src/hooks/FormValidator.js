@@ -55,7 +55,8 @@ export const useValidation = (value, validations, password) => {
     urlError,
     emailError,
     passwordMatchError,
-    inputValid
+    inputValid,
+    setInputValid
   }
 }
 

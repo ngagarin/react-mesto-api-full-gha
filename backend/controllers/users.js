@@ -27,7 +27,7 @@ const login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
       );
       res.cookie('jwt', token, {
-        maxAge: 36000000000,
+        // maxAge: 36000,
         httpOnly: true,
         sameSite: false,
         secure: true,
@@ -35,6 +35,15 @@ const login = (req, res, next) => {
         .send(user.toJSON());
     })
     .catch(next);
+};
+
+const logout = (req, res) => {
+  res.clearCookie('jwt', {
+    httpOnly: true,
+    sameSite: false,
+    secure: true,
+  });
+  return res.status(200).json({ message: 'Деавторизация прошла успешно.' });
 };
 
 const getAllUsers = (req, res, next) => {
@@ -139,6 +148,7 @@ const updateAvatar = (req, res, next) => {
 
 module.exports = {
   login,
+  logout,
   getAllUsers,
   getUserById,
   createUser,
