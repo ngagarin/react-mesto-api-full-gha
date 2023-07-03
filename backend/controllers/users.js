@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
 const { SUCCESSFUL_REQUEST, CREATED } = require('../utils/constants');
-const { NODE_ENV, JWT_SECRET } = require('../config');
+const { NODE_ENV, JWT_SECRET } = require('../utils/config');
 const {
   BadRequestError,
   NotFoundError,

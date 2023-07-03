@@ -18,7 +18,7 @@ router.use('/', authRouter);
 router.use(validateToken);
 router.use('/users', userRouter);
 router.use('/cards', cardRouter);
-router.use('/', clearToken, logoutRouter);
+router.use('/logout', clearToken, logoutRouter);
 router.use('*', (req, res, next) => next(new NotFoundError('По указанному пути ничего не найдено')));
 router.use(errors());
 
